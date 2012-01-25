@@ -1,5 +1,4 @@
  #!/usr/bin/env ruby
-require 'optparse'
 require 'find'
 
 class BinarySecurityDetection
