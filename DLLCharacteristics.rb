@@ -1,7 +1,7 @@
  #!/usr/bin/env ruby
 require 'find'
 
-class BinarySecurityDetection
+class DLLCharacteristics
 	def initialize()
 		@dir = "C:\\"
 		@dllCharacteristicsValue = ""
@@ -12,11 +12,10 @@ class BinarySecurityDetection
 	end
 	
 	def recurse()
-		puts "start"
 		Find.find(@dir) do |fl|
 			if (loadDLLCharacteristicsValue(fl))
 				if (!setStore(fl))
-					puts "dll characteristics for " + fl + " are not valid. This could be a parsing error. Check file manually"
+					puts "\tdll characteristics for " + fl + " are not valid.\n This could be a parsing error. Check file manually"
 				end
 			else
 				next
@@ -156,7 +155,7 @@ class BinarySecurityDetection
 	end
 	
 	def displayStoredValues(value)
-		if !@ran then puts "Program needs to run first, type run"; return 0 end
+		if !@ran then puts "\tProgram needs to run first, type run"; return 0 end
 		
 		@store.each do |item|
 			if !item[value]
@@ -198,7 +197,7 @@ class BinarySecurityDetection
 	end
 	
 	def dllCharacteristicsSearch(dllchar)
-		if !@ran then puts "Program needs to run first, type run"; return 0 end
+		if !@ran then puts "\tProgram needs to run first, type run"; return 0 end
 		
 		@store.each do |item|
 			if item[:dllchars] == dllchar
@@ -215,7 +214,7 @@ puts "                                                       "
 puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 puts "start with  -h for help"
 puts "\n"
-b = BinarySecurityDetection.new()
+b = DLLCharacteristics.new()
 
 while true
 	begin  
@@ -242,11 +241,11 @@ while true
 			if b.getDirectory == "" or b.getDirectory == ".."
 				puts "\tFile path is not set, cd to the path you want to scan"
 			elsif File.file?(b.getDirectory)
-				puts "Starting Scan on File"
+				puts "\tStarting Scan on File"
 				b.readFile()
 				b.setRan() 
 			else
-				puts "Starting Scan on Directories"
+				puts "\tStarting Scan on Directories"
 				b.recurse
 				b.setRan() 
 			end
@@ -264,12 +263,12 @@ while true
 			case val
 				when /^show settings.*/i
 					settings = b.getSettings()
-					puts "Directory: " + settings[:directory]
-					puts "Ran? : " + settings[:ran].to_s
-					if settings[:filetype] == nil
-						puts "Filetypes : ALL"
+					puts "\tDirectory: " + settings[:directory]
+					puts "\tRan? : " + settings[:ran].to_s
+					if settings[:filetype] == "ALL"
+						puts "\tFiletypes : ALL"
 					else 
-						puts "Filetypes : " + settings[:filetype].join(",").to_s
+						puts "\tFiletypes : " + settings[:filetype].join(",").to_s
 					end
 				when /^show directory.*/i
 					puts b.getDirectory()
@@ -308,13 +307,13 @@ while true
 					puts "\t show -h => this help screen"
 					puts "\t reference: http://msdn.microsoft.com/en-us/library/windows/desktop/ms680339(v=vs.85).aspx"
 				else
-					puts "\t invalid show value, try show -h"
+					puts "\tinvalid show value, try show -h"
 			end
 		else
-			puts "invalid command"
+			puts "\tinvalid command"
 	end
 	rescue Exception => e
-		print "\n\nProgram Halted"
+		print "\n\n\tProgram Halted!"
 		break
 		exit
 	end
